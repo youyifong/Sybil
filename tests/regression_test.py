@@ -325,8 +325,30 @@ class TestPredictionRegression(unittest.TestCase):
             import pytest
             pytest.skip(f"Skipping long-running test '{type(self)}'.")
 
+        model_name = "sybil_ensemble"
+
+        # True ->  send web requests to the ARK server (must be launched separately).
+        # False -> to run inference directly.
+        use_ark = os.environ.get("SYBIL_TEST_USE_ARK", "false").lower() == "true"
+        ark_host = os.environ.get("SYBIL_ARK_HOST", "http://localhost:5000")
+
+        version = sybil.__version__
+
+        out_fi_name = f"nlst_predictions_{model_name}_v{version}.json"
+        info_data = {}
+        if use_ark:
+            # Query the ARK server to get the version
+            print(f"Will use ark server {ark_host} for prediction")
+            resp = requests.get(f"{ark_host}/info")
+            info_data = resp.json()["data"]
+            print(f"ARK server response: {resp.text}")
+            version = info_data["modelVersion"]
+            out_fi_name = f"nlst_predictions_ark_v{version}.json"
+
+
+
         default_baseline_preds_path = os.path.join(PROJECT_DIR, "tests",
-                                                   "nlst_predictions", "nlst_predictions_ark_v1.4.0.json")
+                                                   "nlst_predictions", out_fi_name)
         baseline_preds_path = os.environ.get("SYBIL_TEST_BASELINE_PATH", default_baseline_preds_path)
 
         version = sybil.__version__
