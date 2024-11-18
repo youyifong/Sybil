@@ -142,3 +142,6 @@ dmypy.json
 
 # Windows
 Thumbs.db
+regression_test_output/serie_0/serie_0.gif
+tests/nlst_predictions/nlst_predictions_sybil_ensemble_v1.6.0.post1.dev2+g1e358f8.json
+tests/sybil_ensemble_v1.4.0_calibrations.json
